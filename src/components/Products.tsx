@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 interface Product {
   id: number;
@@ -141,12 +142,14 @@ const Products: React.FC = () => {
         </div>
         
         <div className="text-center mt-16">
-          <Button 
-            className="bg-dega-blue hover:bg-dega-blue/90 text-white btn-ripple"
-            size="lg"
-          >
-            View All Products
-          </Button>
+          <Link to="/products">
+            <Button 
+              className="bg-dega-blue hover:bg-dega-blue/90 text-white btn-ripple"
+              size="lg"
+            >
+              Explore Our Collection
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
