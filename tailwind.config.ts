@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				dega: {
+					blue: "#0EA5E9",
+					"light-blue": "#33C3F0",
+					"bright-blue": "#1EAEDB",
+					silver: "#9F9EA1",
+					"light-silver": "#C8C8C9",
+					white: "#FFFFFF",
+					"off-white": "#F1F1F1",
 				}
 			},
 			borderRadius: {
@@ -84,11 +94,51 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'ripple': {
+					'0%': { transform: 'scale(0.95)', opacity: '0.8' },
+					'50%': { transform: 'scale(1.05)', opacity: '0.4' },
+					'100%': { transform: 'scale(1.1)', opacity: '0' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'fade-in-up': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'fade-in': {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'ripple': 'ripple 3s infinite ease-in-out',
+				'float': 'float 6s infinite ease-in-out',
+				'spin-slow': 'spin-slow 15s linear infinite',
+				'fade-in-up': 'fade-in-up 0.8s ease-out',
+				'fade-in': 'fade-in 1.2s ease-out'
+			},
+			fontFamily: {
+				montserrat: ['Montserrat', 'sans-serif'],
+				poppins: ['Poppins', 'sans-serif']
+			},
+			backgroundImage: {
+				'water-pattern': "url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80')",
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 			}
 		}
 	},
