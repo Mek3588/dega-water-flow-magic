@@ -67,6 +67,15 @@
   }
 }
 
+/* Loading Animation Utilities */
+.duration-2000 {
+  transition-duration: 2000ms;
+}
+
+.duration-3000 {
+  transition-duration: 3000ms;
+}
+
 /* Water Animation Components */
 .water-ripple {
   @apply absolute rounded-full bg-dega-blue bg-opacity-20 animate-ripple;
