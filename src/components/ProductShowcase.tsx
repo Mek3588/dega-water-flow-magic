@@ -1,228 +1,121 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
 
-import React, { useRef, useEffect, useState } from 'react';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselNext, 
-  CarouselPrevious 
-} from '@/components/ui/carousel';
-import { Droplets, CircleDashed, Star } from 'lucide-react';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
-import { cn } from '@/lib/utils';
+const ProductShowcase = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
-interface Product {
-  id: number;
-  name: string;
-  tagline: string;
-  description: string;
-  source: string;
-  mineralProfile: string;
-  lifestyle: string;
-  image: string;
-  icon: React.ReactNode;
-}
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Dega Still",
-    tagline: "Pure Elegance",
-    description: "Our signature still water, defined by its exceptional purity and silky smooth texture.",
-    source: "Alpine Springs, Pristine Mountains",
-    mineralProfile: "Perfectly balanced with essential minerals for optimal hydration",
-    lifestyle: "Everyday luxury hydration for the discerning individual",
-    image: "https://images.unsplash.com/photo-1536939459926-301728717817?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    icon: <Droplets />,
-  },
-  {
-    id: 2,
-    name: "Dega Sparkle",
-    tagline: "Effervescent Wonder",
-    description: "Naturally carbonated water with fine, delicate bubbles that dance on the palate.",
-    source: "Protected Artesian Wells",
-    mineralProfile: "Rich in natural bicarbonates with a bright, clean finish",
-    lifestyle: "For celebrations and moments that deserve elevation",
-    image: "https://images.unsplash.com/photo-1605761442941-807a550111d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    icon: <CircleDashed />,
-  },
-  {
-    id: 3,
-    name: "Dega Vital",
-    tagline: "Mineral Renaissance",
-    description: "Enhanced with essential minerals to support vitality and wellbeing.",
-    source: "Ancient Mineral Bedrock",
-    mineralProfile: "Elevated levels of magnesium, calcium and potassium",
-    lifestyle: "Active individuals seeking premium hydration and recovery",
-    image: "https://images.unsplash.com/photo-1580424917967-a8867a6e676e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    icon: <Star />,
-  },
-  {
-    id: 4,
-    name: "Dega pH+",
-    tagline: "Balanced Perfection",
-    description: "Alkaline water with an optimal pH level to support your body's natural balance.",
-    source: "Glacial Melt, Northern Territories",
-    mineralProfile: "Naturally alkaline with a perfect 8.2 pH balance",
-    lifestyle: "Health-conscious connoisseurs seeking premium alkaline hydration",
-    image: "https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    icon: <Droplets />,
-  },
-];
-
-const ProductShowcase: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
+    if (!emblaApi) return;
     
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    onSelect();
+    setScrollSnaps(emblaApi.scrollSnapList());
+    emblaApi.on('select', onSelect);
     
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      emblaApi.off('select', onSelect);
     };
-  }, []);
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+  
+  const scrollTo = useCallback(
+    (index: number) => emblaApi && emblaApi.scrollTo(index),
+    [emblaApi]
+  );
+
+  // Product data
+  const products = [
+    {
+      id: 1,
+      name: "Dega Pure",
+      image: "https://images.unsplash.com/photo-1638439430466-b9f5b41e6cf4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      description: "Our signature pure water, sourced from pristine mountain springs."
+    },
+    {
+      id: 2,
+      name: "Dega Sparkling",
+      image: "https://images.unsplash.com/photo-1598343175492-9e7dc0e63cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      description: "Delicate carbonation for a refined sparkling experience."
+    },
+    {
+      id: 3,
+      name: "Dega Mineral+",
+      image: "https://images.unsplash.com/photo-1606355775047-6eb363b6f81d?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+      description: "Enriched with essential minerals for optimal hydration."
+    }
+  ];
 
   return (
-    <section 
-      ref={sectionRef}
-      className="py-24 bg-white relative overflow-hidden"
-    >
+    <div className="relative py-16 bg-gradient-to-b from-white to-dega-blue/5">
       <div className="container mx-auto px-4">
-        <div className="mb-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-montserrat font-light text-gray-800 mb-4">
-            Our <span className="font-semibold text-dega-blue">Collection</span>
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Each Dega Water variant is meticulously crafted to deliver a unique sensory experience, 
-            celebrating the perfect harmony of nature and innovation.
-          </p>
-        </div>
+        <h2 className="text-4xl font-montserrat font-light text-center mb-12">
+          Our <span className="font-semibold text-dega-blue">Collection</span>
+        </h2>
         
-        <div className="max-w-6xl mx-auto">
-          <Carousel
-            opts={{
-              align: "center",
-              loop: true,
-            }}
-            className="w-full"
-            onSelect={(api) => {
-              if (api) setActiveIndex(api.selectedScrollSnap());
-            }}
-          >
-            <CarouselContent className="-ml-4">
-              {products.map((product, index) => (
-                <CarouselItem 
-                  key={product.id} 
-                  className="pl-4 sm:basis-2/3 md:basis-1/2 lg:basis-1/3"
-                >
-                  <div
-                    className={cn(
-                      "h-full transition-all duration-1000",
-                      isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10",
-                    )}
-                    style={{ 
-                      transitionDelay: `${index * 0.15}s`,
-                    }}
-                  >
-                    <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-dega-blue/10 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      {/* Image Container */}
-                      <div className="relative h-72 overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
-                        />
-                        <div className="absolute bottom-4 left-4 z-10 flex items-center">
-                          <div className="p-2 rounded-full bg-white/20 backdrop-blur-sm text-white mr-2">
-                            {product.icon}
-                          </div>
-                          <div>
-                            <h3 className="text-white font-semibold text-xl">{product.name}</h3>
-                            <p className="text-white/80 text-sm">{product.tagline}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="p-5 flex-grow flex flex-col">
-                        <p className="text-gray-700 mb-4 flex-grow">{product.description}</p>
-                        
-                        <div className="space-y-2 mt-auto">
-                          <HoverCard openDelay={100} closeDelay={100}>
-                            <HoverCardTrigger asChild>
-                              <div className="flex items-center text-sm text-dega-blue cursor-pointer hover:underline">
-                                <Star size={14} className="mr-1" />
-                                <span>Source</span>
-                              </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent className="bg-dega-blue/95 text-white border-none shadow-xl">
-                              <p>{product.source}</p>
-                            </HoverCardContent>
-                          </HoverCard>
-                          
-                          <HoverCard openDelay={100} closeDelay={100}>
-                            <HoverCardTrigger asChild>
-                              <div className="flex items-center text-sm text-dega-blue cursor-pointer hover:underline">
-                                <CircleDashed size={14} className="mr-1" />
-                                <span>Mineral Profile</span>
-                              </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent className="bg-dega-blue/95 text-white border-none shadow-xl">
-                              <p>{product.mineralProfile}</p>
-                            </HoverCardContent>
-                          </HoverCard>
-                          
-                          <HoverCard openDelay={100} closeDelay={100}>
-                            <HoverCardTrigger asChild>
-                              <div className="flex items-center text-sm text-dega-blue cursor-pointer hover:underline">
-                                <Droplets size={14} className="mr-1" />
-                                <span>Lifestyle</span>
-                              </div>
-                            </HoverCardTrigger>
-                            <HoverCardContent className="bg-dega-blue/95 text-white border-none shadow-xl">
-                              <p>{product.lifestyle}</p>
-                            </HoverCardContent>
-                          </HoverCard>
-                        </div>
-                      </div>
+        <div className="relative">
+          <div className="embla overflow-hidden" ref={emblaRef}>
+            <div className="embla__container flex">
+              {products.map((product) => (
+                <div key={product.id} className="embla__slide flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_33.33%] px-4">
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-500 hover:scale-105">
+                    <div className="relative h-80">
+                      <img 
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-montserrat font-semibold mb-2">{product.name}</h3>
+                      <p className="text-gray-600">{product.description}</p>
                     </div>
                   </div>
-                </CarouselItem>
+                </div>
               ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex -left-4 lg:-left-6 bg-white border-dega-blue/20 text-dega-blue hover:bg-dega-blue hover:text-white" />
-            <CarouselNext className="hidden sm:flex -right-4 lg:-right-6 bg-white border-dega-blue/20 text-dega-blue hover:bg-dega-blue hover:text-white" />
-          </Carousel>
-          
-          {/* Dots indicator */}
-          <div className="flex justify-center gap-2 mt-8">
-            {products.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  activeIndex === index ? "bg-dega-blue scale-125" : "bg-dega-blue/30"
-                }`}
-              />
-            ))}
+            </div>
           </div>
+          
+          {/* Navigation buttons */}
+          <button 
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-dega-blue rounded-full p-2 shadow-md z-10"
+            onClick={scrollPrev}
+          >
+            <ArrowLeft className="h-6 w-6" />
+          </button>
+          
+          <button 
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-dega-blue rounded-full p-2 shadow-md z-10"
+            onClick={scrollNext}
+          >
+            <ArrowRight className="h-6 w-6" />
+          </button>
+        </div>
+        
+        {/* Dots */}
+        <div className="flex justify-center mt-8">
+          {scrollSnaps.map((_, index) => (
+            <button
+              key={index}
+              className={`w-3 h-3 rounded-full mx-1 transition-all duration-300 ${
+                index === selectedIndex ? 'bg-dega-blue scale-125' : 'bg-dega-blue/30'
+              }`}
+              onClick={() => scrollTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

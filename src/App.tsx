@@ -14,16 +14,39 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   useEffect(() => {
+    // Mark the content as loaded
+    const loadContentTimer = setTimeout(() => {
+      setContentLoaded(true);
+    }, 1000); // Content is considered loaded after 1s
+    
     // If you want to ensure a minimum display time for the loading screen
-    // even if the content loads faster, you can use this approach
-    const timer = setTimeout(() => {
-      setIsLoading(false);
+    // even if the content loads faster, use this approach
+    const minDisplayTimer = setTimeout(() => {
+      if (contentLoaded) {
+        setIsLoading(false);
+      }
     }, 4000); // Minimum 4 seconds loading time
     
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(loadContentTimer);
+      clearTimeout(minDisplayTimer);
+    };
+  }, [contentLoaded]);
+
+  // When contentLoaded changes, check if we should stop the loading screen
+  useEffect(() => {
+    if (contentLoaded) {
+      // Add a slight delay to ensure smooth transition
+      const transitionTimer = setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+      
+      return () => clearTimeout(transitionTimer);
+    }
+  }, [contentLoaded]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -32,7 +55,7 @@ const App = () => {
         <Sonner />
         
         {isLoading ? (
-          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+          <LoadingScreen onLoadingComplete={() => setContentLoaded(true)} />
         ) : (
           <BrowserRouter>
             <Routes>
